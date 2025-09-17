@@ -1,5 +1,5 @@
 # Option
-[![ci](https://github.com/Dragonrun1/option/workflows/ci/badge.svg)](https://github.com/Dragonrun1/option/actions)
+[![Python package](https://github.com/Dragonrun1/option/actions/workflows/python-package.yml/badge.svg)](https://github.com/Dragonrun1/option/actions/workflows/python-package.yml)
 [![codecov](https://codecov.io/gh/Dragonrun1/option/branch/main/graph/badge.svg)](https://codecov.io/gh/Dragonrun1/option)
 <br>
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
