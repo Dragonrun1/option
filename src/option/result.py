@@ -58,6 +58,7 @@ class Result(Generic[T, E]):
         self._is_ok = is_ok
         self._type = type(self)
 
+    # noinspection PyPep8Naming
     @classmethod
     def Ok(cls, val: T) -> 'Result[T, Any]':
         """
@@ -78,6 +79,7 @@ class Result(Generic[T, E]):
         """
         return cls(val, True, _force=True)
 
+    # noinspection PyPep8Naming
     @classmethod
     def Err(cls, err: E) -> 'Result[Any, E]':
         """
@@ -183,7 +185,7 @@ class Result(Generic[T, E]):
         """
         Applies a function to the contained :meth:`Result.Ok` value.
 
-        This is different than :meth:`Result.map` because the function
+        This is different from :meth:`Result.map` because the function
         result is not wrapped in a new :class:`Result`.
 
         Args:
@@ -422,11 +424,13 @@ class Result(Generic[T, E]):
         return NotImplemented
 
 
+# noinspection PyPep8Naming
 def Ok(val: T) -> Result[T, Any]:
     """Shortcut function for :meth:`Result.Ok`."""
     return Result.Ok(val)
 
 
+# noinspection PyPep8Naming
 def Err(err: E) -> Result[Any, E]:
     """Shortcut function for :meth:`Result.Err`."""
     return Result.Err(err)

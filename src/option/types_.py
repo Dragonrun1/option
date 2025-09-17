@@ -1,17 +1,17 @@
 # MIT License
-#
+
 # Copyright (c) 2018-2022 Peijun Ma
-#
+
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-#
+
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-#
+
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,13 +22,37 @@
 
 # pylint: skip-file
 
-"""
-.. data:: NONE
+import sys
+from typing import TypeVar
 
-    Represents a None value.
-"""
-from .option_ import NONE, Option, Some, maybe
-from .result import Err, Ok, Result
+if sys.version_info >= (3, 12):
+    from typing import Protocol
+else:
+    raise DeprecationWarning("Python 3.12 or higher is required.")
 
-__version__ = '2.1.0'
-__all__ = ['NONE', 'Option', 'Some', 'maybe', 'Result', 'Ok', 'Err', '__version__']
+
+T = TypeVar('T')
+U = TypeVar('U')
+A = TypeVar('A')
+
+K = TypeVar('K')
+V = TypeVar('V')
+
+E = TypeVar('E')
+F = TypeVar('F')
+
+
+class SupportsDunderLT(Protocol):
+    def __lt__(self, __other: object) -> bool: ...
+
+
+class SupportsDunderGT(Protocol):
+    def __gt__(self, __other: object) -> bool: ...
+
+
+class SupportsDunderLE(Protocol):
+    def __le__(self, __other: object) -> bool: ...
+
+
+class SupportsDunderGE(Protocol):
+    def __ge__(self, __other: object) -> bool: ...

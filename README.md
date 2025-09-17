@@ -1,5 +1,5 @@
 # Option
-[![CircleCI](https://circleci.com/gh/MaT1g3R/option/tree/master.svg?style=svg)](https://circleci.com/gh/MaT1g3R/option/tree/master)
+[![CircleCI](https://circleci.com/gh/Dragonrun1/option/tree/master.svg?style=svg)](https://circleci.com/gh/Dragonrun1/option/tree/master)
 
 Rust-like [Option](https://doc.rust-lang.org/std/option/enum.Option.html) and [Result](https://doc.rust-lang.org/std/result/enum.Result.html) types in Python, slotted and fully typed.
 
@@ -12,21 +12,22 @@ Using an `Option` type forces you to deal with `None` values in your code and in
 Using a `Result` type simplifies error handling and reduces `try` `except` blocks.
 
 ## Quick Start
+
 ```Python
 from option import Result, Option, Ok, Err
 from requests import get
 
 
 def call_api(url, params) -> Result[dict, int]:
-    result = get(url, params)
-    code = result.status_code
-    if code == 200:
-        return Ok(result.json())
-    return Err(code)
+  result = get(url, params)
+  code = result.status_code
+  if code==200:
+    return Ok(result.json())
+  return Err(code)
 
 
 def calculate(url, params) -> Option[int]:
-    return call_api(url, params).ok().map(len)
+  return call_api(url, params).ok().map(len)
 
 
 dict_len = calculate('https://example.com', {})

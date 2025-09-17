@@ -309,7 +309,7 @@ class Option(Generic[T]):
         Applies the callback to the contained value if the option
         is not :py:data:`NONE`.
 
-        This is different than :py:meth:`Option.map` because the result
+        This is different from :py:meth:`Option.map` because the result
         of the callback isn't wrapped in a new :py:class:`Option`
 
         Args:
