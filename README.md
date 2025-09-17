@@ -1,5 +1,8 @@
 # Option
-[![CircleCI](https://circleci.com/gh/Dragonrun1/option/tree/master.svg?style=svg)](https://circleci.com/gh/Dragonrun1/option/tree/master)
+[![ci](https://github.com/Dragonrun1/option/workflows/ci/badge.svg)](https://github.com/Dragonrun1/option/actions)
+[![codecov](https://codecov.io/gh/Dragonrun1/option/branch/main/graph/badge.svg)](https://codecov.io/gh/Dragonrun1/option)
+<br>
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 Rust-like [Option](https://doc.rust-lang.org/std/option/enum.Option.html) and [Result](https://doc.rust-lang.org/std/result/enum.Result.html) types in Python, slotted and fully typed.
 
