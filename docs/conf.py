@@ -22,8 +22,11 @@
 from option import __version__
 
 project = 'option'
-copyright = '2018-2022, Peijun Ma'
-author = 'Peijun Ma'
+copyright = [
+    '2018-2022, Peijun Ma'
+    '; 2025, Michael Cummings'
+]
+author = 'Peijun Ma \\and Michael Cummings'
 
 # The short X.Y version
 # The full version, including alpha/beta/rc tags
@@ -78,13 +81,31 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+#html_theme = 'alabaster'
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 # html_theme_options = {}
+html_theme_options = {
+    "content_footer_items": ["last-updated"],
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/dragonrun1/option",
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+        },
+    ],
+    "icon_links_label": "Quick Links",
+    "navbar_align": "content",
+    "primary_sidebar_end": ["indices.html", "sidebar-ethical-ads.html"],
+    "show_version_warning_banner": True,
+}
+
+html_last_updated_fmt = '%Y-%m-%d'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

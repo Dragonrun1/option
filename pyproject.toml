@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "option"
-version = "2.1.0"
+version = "2.1.1"
 description = "Rust like Option and Result types in Python"
 authors = [
     { name = "Peijun Ma", email = "peijun.ma@protonmail.com" },
