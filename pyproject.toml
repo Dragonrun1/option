@@ -31,7 +31,9 @@ dev = [
     "pylint>=3.3.8",
     "pytest>=8.4.2",
     "pytest-cov>=7.0.0",
+    "ruff>=0.13.0",
     "sphinx>=8.2.3",
+    "ty>=0.0.1a20",
 ]
 
 
@@ -39,3 +41,32 @@ dev = [
 strict = true
 show_column_numbers = true
 show_error_codes = true
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules -vvv"
+testpaths = ["tests/"]
+
+[tool.ruff]
+fix = true
+line-length = 80
+output-format = "grouped"
+required-version = ">=0.13.0,<1.0"
+src = ["src/*", "tests/*"]
+exclude = ["docs/*"]
+
+[tool.ruff.format]
+docstring-code-format = true
+exclude = ["*.pyi"]
+
+[tool.ruff.lint]
+extend-select = ["D", "E", "I", "N", "R", "W"]
+ignore = ["D205"]
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["Err", "NONE", "Ok",  "Some"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D103"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
