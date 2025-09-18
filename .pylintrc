@@ -12,7 +12,6 @@ disable=no-name-in-module,
         attribute-defined-outside-init,
         no-else-return,
         fixme,
-        protected-class,
         protected-access,
         assigning-non-slot,
         unused-import,
@@ -69,8 +68,6 @@ indent-after-paren=4
 indent-string='    '
 max-line-length=100
 max-module-lines=1000
-no-space-check=trailing-comma,
-               dict-separator
 single-line-class-stmt=no
 single-line-if-stmt=no
 
@@ -149,4 +146,4 @@ known-third-party=enchant
 
 
 [EXCEPTIONS]
-overgeneral-exceptions=Exception
+overgeneral-exceptions='builtins.Exception
