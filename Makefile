@@ -1,12 +1,12 @@
 .PHONY: docs test publish lint
 
 test:
-	python -m pytest -vvv -s tests
+	pytest
 
 docs:
 	PYTHONPATH=.. make -C docs html
 	touch docs/_build/html/.nojekyll
 
 lint:
-	mypy option
-	pylint option
+	mypy -p option
+	ruff check
