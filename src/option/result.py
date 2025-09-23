@@ -2,12 +2,12 @@
 # Copyright © 2025 Michael Cummings <mgcummings@yahoo.com>
 #
 # Licensed under the MIT license
-# [MIT](https:#opensource.org/license/mit-0)
+# [MIT](https://opensource.org/license/mit-0)
 #
 # Files in this project may not be copied, modified, or distributed except
 # according to those terms.
 #
-# The full test of the license can be found in the project LICENSE.md file.
+# The full text of the license can be found in the project LICENSE.md file.
 #
 # SPDX-License-Identifier: MIT
 ##############################################################################
@@ -86,40 +86,6 @@ class Result(Generic[T, E]):
     """
 
     __slots__ = ("_val", "_is_ok", "_type")
-
-    def __init__(
-        self, val: Union[T, E], is_ok: bool, *, _force: bool = False
-    ) -> None:
-        """Low-level initializer for :class:`Result`.
-
-        This initializer is internal. Use :meth:`Result.Ok`, :meth:`Result.Err`,
-        :func:`Ok`, or :func:`Err` instead.
-
-        Args:
-            val: The wrapped success (``T``) or error (``E``) value.
-            is_ok: True if ``val`` represents success; False if it is an error.
-            _force: Internal switch that allows construction.
-
-        Raises:
-            TypeError: If called without ``_force=True``.
-
-        Examples:
-            Attempting direct initialization:
-
-            >>> try:
-            ...     Result(1, True)
-            ... except TypeError as e:
-            ...     print("TypeError" in str(e))
-            True
-        """
-        if not _force:
-            raise TypeError(
-                "Cannot directly initialize, "
-                "please use one of the factory functions instead."
-            )
-        self._val = val
-        self._is_ok = is_ok
-        self._type = type(self)
 
     # noinspection PyPep8Naming
     @classmethod
@@ -475,6 +441,49 @@ class Result(Generic[T, E]):
 
     def __hash__(self) -> int:  # noqa: D105
         return hash((self._type, self._is_ok, self._val))
+
+    def __init__(
+        self, val: Union[T, E], is_ok: bool, *, _force: bool = False
+    ) -> None:
+        """Low-level initializer for :class:`Result` (internal-only).
+
+        **WARNING**
+            This constructor is not part of the public API.
+            Prefer using the factory helpers :meth:`Result.Ok`,
+            :meth:`Result.Err`, :func:`Ok`, or
+            :func:`Err` instead.
+
+        Args:
+            val: The wrapped success (``T``) or error (``E``) value.
+            is_ok: True if ``val`` represents success; False if it is an error.
+            _force: Internal switch that allows construction.
+
+        Raises:
+            TypeError: If called without ``_force=True``.
+
+        Examples:
+            Correct usage via factories:
+                >>> Ok(1)
+                Ok(1)
+                >>> Err("Oops")
+                Err('Oops')
+
+            Incorrect direct construction:
+
+            >>> try:
+            ...     Result(1, True)
+            ... except TypeError as e:
+            ...     print("TypeError" in str(e))
+            False
+        """
+        if not _force:
+            raise TypeError(
+                "Cannot directly initialize, "
+                "please use one of the factory functions instead."
+            )
+        self._val = val
+        self._is_ok = is_ok
+        self._type = type(self)
 
     def __le__(  # noqa: D105
         self: "Result[SupportsDunderLE, SupportsDunderLE]", other: object

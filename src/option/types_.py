@@ -2,15 +2,16 @@
 # Copyright © 2025 Michael Cummings <mgcummings@yahoo.com>
 #
 # Licensed under the MIT license
-# [MIT](https:#opensource.org/license/mit-0)
+# [MIT](https://opensource.org/license/mit-0)
 #
 # Files in this project may not be copied, modified, or distributed except
 # according to those terms.
 #
-# The full test of the license can be found in the project LICENSE.md file.
+# The full text of the license can be found in the project LICENSE.md file.
 #
 # SPDX-License-Identifier: MIT
-##############################################################################
+###############################################################################
+# pylint: disable=R0903
 """Core protocols and type variable definitions for type hinting.
 
 This module defines utility TypeVars for frequently used type hints and
@@ -35,11 +36,10 @@ Raises:
 import sys
 from typing import TypeVar
 
-if sys.version_info >= (3, 12):
+if (3, 12) <= sys.version_info:
     from typing import Protocol
 else:
     raise DeprecationWarning("Python 3.12 or higher is required.")
-
 
 A = TypeVar("A")
 E = TypeVar("E")
