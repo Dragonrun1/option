@@ -30,8 +30,10 @@ jobs:
       run: uv venv
     - name: Install the project
       run: uv sync --locked --all-extras --dev
+    - name: Lint
+      run: uv run dev-lint
     - name: Test
-      run: uv run pytest --cov --cov-branch --cov-report=xml tests
+      run: uv run dev-test
     - name: Upload results to Codecov
       uses: codecov/codecov-action@v5
       with:
