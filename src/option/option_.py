@@ -2,15 +2,15 @@
 # Copyright © 2025 Michael Cummings <mgcummings@yahoo.com>
 #
 # Licensed under the MIT license
-# [MIT](https:#opensource.org/license/mit-0)
+# [MIT](https://opensource.org/license/mit-0)
 #
 # Files in this project may not be copied, modified, or distributed except
 # according to those terms.
 #
-# The full test of the license can be found in the project LICENSE.md file.
+# The full text of the license can be found in the project LICENSE.md file.
 #
 # SPDX-License-Identifier: MIT
-##############################################################################
+###############################################################################
 """Option type for explicit optional values.
 
 This module defines a generic :class:`Option` container that models the presence
@@ -18,29 +18,32 @@ This module defines a generic :class:`Option` container that models the presence
 type-safe handling of missing values without relying on raw ``None`` checks.
 
 Overview:
-  - Container: :class:`Option[T]` with variants represented by truthiness
+  * Container: :class:`Option[T]` with variants represented by truthiness
     (``Some(x)`` is truthy, :data:`NONE` is falsy).
-  - Transformations: :meth:`Option.map`, :meth:`Option.flatmap`,
+  * Transformations: :meth:`Option.map`, :meth:`Option.flatmap`,
     :meth:`Option.filter`.
-  - Extraction: :meth:`Option.unwrap`, :meth:`Option.unwrap_or`,
-    :meth:`Option.unwrap_or_else`, :meth:`Option.expect`, :pyattr:`Option.value`.
-  - Mapping access: :meth:`Option.get` when the inner value is a
+  * Extraction: :meth:`Option.unwrap`, :meth:`Option.unwrap_or`,
+    :meth:`Option.unwrap_or_else`, :meth:`Option.expect`,
+    :pyattr:`Option.value`.
+  * Mapping access: :meth:`Option.get` when the inner value is a
     :class:`collections.abc.Mapping`.
-  - Construction helpers: :func:`Some`, :func:`maybe`, and the singleton
+  * Construction helpers: :func:`Some`, :func:`maybe`, and the singleton
     :data:`NONE`.
 
 Public API:
-  - :class:`Option[T]`: The core optional container.
-  - :func:`Some`: Construct a ``Some`` value.
-  - :func:`maybe`: Construct ``Some(val)`` if ``val is not None``,
+  * :class:`Option[T]`: The core optional container.
+  * :func:`Some`: Construct a ``Some`` value.
+  * :func:`maybe`: Construct ``Some(val)`` if ``val is not None``,
     otherwise :data:`NONE`.
-  - :data:`NONE`: The singleton representing the absence of a value.
+  * :data:`NONE`: The singleton representing the absence of a value.
 
 Key behaviors:
-  - Truthiness:
+
+Truthiness:
       >>> bool(Some(1)), bool(NONE)
       (True, False)
-  - Unwrap and defaults:
+
+Unwrap and defaults:
       >>> Some(10).unwrap()
       10
       >>> NONE.unwrap_or(42)
@@ -52,21 +55,24 @@ Key behaviors:
       ... except ValueError as e:
       ...     print(e)
       Value is NONE.
-  - Transformations:
+
+Transformations:
       >>> Some(2).map(lambda x: x * x)
       Some(4)
       >>> Some(2).flatmap(lambda x: Some(x + 5))
       Some(7)
       >>> NONE.map(lambda x: x)  # remains NONE
       NONE
-  - Filtering:
+
+Filtering:
       >>> Some(3).filter(lambda x: x % 2 == 1)
       Some(3)
       >>> Some(4).filter(lambda x: x % 2 == 1)
       NONE
       >>> NONE.filter(lambda _: True)
       NONE
-  - Mapping access:
+
+Mapping access:
       >>> Some({"a": 1}).get("a")
       Some(1)
       >>> Some({}).get("a", 99)
@@ -75,7 +81,8 @@ Key behaviors:
       Some(5)
       >>> NONE.get("a") is NONE
       True
-  - Construction helpers:
+
+Construction helpers:
       >>> Some("hi")
       Some('hi')
       >>> maybe(None) is NONE
@@ -84,18 +91,17 @@ Key behaviors:
       Some(0)
 
 Notes:
-  - Ordering: :data:`NONE` compares lower than any ``Some`` value; ``Some``
+  * Ordering: :data:`NONE` compares lower than any ``Some`` value; ``Some``
     instances order by their inner values when comparable.
-  - The :class:`Option` constructor is internal; use :func:`Some`,
+  * The :class:`Option` constructor is internal; use :func:`Some`,
     :func:`maybe`, or :data:`NONE` instead.
 
 """
 
-from typing import Callable, Generic, Mapping, Optional, Union
+from typing import Any, Callable, Generic, Mapping, Optional, Union, cast
 
 from option.types_ import (
     A,
-    K,
     SupportsDunderGE,
     SupportsDunderGT,
     SupportsDunderLE,
@@ -136,37 +142,11 @@ class Option(Generic[T]):
 
     __slots__ = ("_val", "_is_some", "_type")
 
-    def __init__(
-        self, value: T, is_some: bool, *, _force: bool = False
-    ) -> None:
-        """Initializes the object with specified value, state, and internal
-        configurations.
-
-        Args:
-            value: The value to be encapsulated within the object.
-            is_some: Indicates if the object has a valid value or not.
-            _force: A boolean flag used to bypass the direct initialization
-            restriction.
-
-        Raises:
-            TypeError:
-              If initialization is attempted directly without using the factory
-              functions and `_force` is set to False.
-        """
-        if not _force:
-            raise TypeError(
-                "Cannot directly initialize, "
-                "please use one of the factory functions instead."
-            )
-        self._val = value
-        self._is_some = is_some
-        self._type = type(self)
-
     # noinspection PyPep8Naming
     @classmethod
     def NONE(cls) -> "Option[T]":
         """No Value."""
-        return NONE  # type: ignore
+        return cast("Option[T]", NONE)
 
     # noinspection PyPep8Naming
     @classmethod
@@ -226,7 +206,7 @@ class Option(Generic[T]):
         """
         if self._is_some and predicate(self._val):
             return self
-        return NONE  # type: ignore
+        return cast("Option[T]", NONE)
 
     def flatmap(self, callback: "Callable[[T], Option[U]]") -> "Option[U]":
         """Applies the callback to the contained value if the option
@@ -241,7 +221,7 @@ class Option(Generic[T]):
         Returns:
             :py:data:`NONE` if the option is :py:data:`NONE`.
 
-            otherwise calls `callback` with the contained value and
+            Otherwise, calls `callback` with the contained value and
             returns the result.
 
         Examples:
@@ -259,10 +239,14 @@ class Option(Generic[T]):
             NONE
 
         """
-        return callback(self._val) if self._is_some else NONE  # type: ignore
+        return (
+            callback(self._val)
+            if self._is_some
+            else cast("Option[U]", self.NONE())
+        )
 
     def get(
-        self: "Option[Mapping[K,V]]", key: K, default: Union[V, None] = None
+        self: "Option[V]", key: Any, default: "Union[V, None]" = None
     ) -> "Option[V]":
         """Gets a mapping value by key in the contained value or returns
         ``default`` if the key doesn't exist.
@@ -288,9 +272,9 @@ class Option(Generic[T]):
             NONE
 
         """
-        if self._is_some:
-            return self._type.maybe(self._val.get(key, default))  # type: ignore
-        return self._type.maybe(default)  # type: ignore
+        if not (self._is_some and isinstance(self._val, Mapping)):
+            return self._type.maybe(default)
+        return self._type.maybe(self._val.get(key, default))
 
     @property
     def is_none(self) -> bool:
@@ -336,7 +320,11 @@ class Option(Generic[T]):
             NONE
 
         """
-        return self._type.Some(callback(self._val)) if self._is_some else NONE  # type: ignore
+        if self._is_some:
+            return cast(
+                "Option[U]", self._type.Some(cast("T", callback(self._val)))
+            )
+        return cast("Option[U]", NONE)
 
     def map_or(self, callback: Callable[[T], U], default: A) -> Union[U, A]:
         """Applies the ``callback`` to the contained value or returns
@@ -404,7 +392,9 @@ class Option(Generic[T]):
             NONE
 
         """
-        return NONE if val is None else cls.Some(val)  # type: ignore
+        if val is None:
+            return cls.NONE()
+        return cls.Some(val)
 
     def unwrap(self) -> T:
         """Returns the value in the :py:class:`Option` if it is ``Some``.
@@ -439,7 +429,7 @@ class Option(Generic[T]):
 
         Notes:
             If you wish to use a result of a function call as the default,
-            it is recommnded to use :py:meth:`unwrap_or_else` instead.
+            it is recommended to use :py:meth:`unwrap_or_else` instead.
 
         Examples:
             >>> Some(0).unwrap_or(3)
@@ -502,6 +492,58 @@ class Option(Generic[T]):
 
     def __hash__(self) -> int:  # noqa: D105
         return hash((self.__class__, self._is_some, self._val))
+
+    def __init__(
+        self, value: T, is_some: bool, *, _force: bool = False
+    ) -> None:
+        """Initialize an :class:`Option` instance (internal-only).
+
+        **WARNING**
+            This constructor is not part of the public API.
+            Prefer using the factory helpers :func:`Some`, :meth:`Option.maybe`,
+            or the :py:data:`NONE` singleton instead.
+            Direct calls are rejected unless ``_force`` is explicitly set to
+            ``True`` by internal helpers.
+
+        Args:
+            value (T): The inner value when ``is_some`` is ``True``;
+                ignored when ``is_some`` is ``False``.
+            is_some (bool): Whether this instance represents a ``Some`` value
+                (``True``) or :py:data:`NONE` (``False``).
+            _force (bool, keyword-only): Internal escape hatch used by factory
+                helpers to bypass the guard.
+                Must be ``True`` for direct construction.
+
+        Raises:
+            TypeError: If called directly with ``_force`` set to ``False``.
+
+        Notes:
+            Public construction should go through :func:`Some`,
+            :meth:`Option.maybe`, or the :py:data:`NONE` singleton.
+
+        Examples:
+            Correct usage via factories:
+                >>> Some(1)
+                Some(1)
+                >>> Option.maybe(None) is NONE
+                True
+
+            Incorrect direct construction:
+
+            >>> try:
+            ...     Option(1, True)
+            ... except TypeError as e:
+            ...     print("TypeError" in str(e))
+            False
+        """
+        if not _force:
+            raise TypeError(
+                "Cannot directly initialize, "
+                "please use one of the factory functions instead."
+            )
+        self._val = value
+        self._is_some = is_some
+        self._type = type(self)
 
     def __le__(self: "Option[SupportsDunderLE]", other: object) -> bool:  # noqa: D105
         if isinstance(other, self._type):
