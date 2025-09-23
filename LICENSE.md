@@ -17,7 +17,7 @@ Replace text within `[]` with your own information in the following templates:
 # Copyright © [YEAR] [Your Name] <[(Your E-mail]>
 #
 # Licensed under the MIT license
-# [MIT](https:#opensource.org/license/mit-0).
+# [MIT](https://opensource.org/license/mit-0).
 #
 # Files in this project may not be copied, modified, or distributed except
 # according to those terms.
