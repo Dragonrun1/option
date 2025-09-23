@@ -11,31 +11,33 @@
 #
 # SPDX-License-Identifier: MIT
 ###############################################################################
+
 """Option type for explicit optional values.
 
 This module defines a generic :class:`Option` container that models the presence
-(:func:`Some`) or absence (:data:`NONE`) of a value. It encourages explicit,
-type-safe handling of missing values without relying on raw ``None`` checks.
+(:func:`Some`) or absence (:data:`NONE`) of a value.
+It encourages explicit, type-safe handling of missing values without relying on
+raw ``None`` checks.
 
 Overview:
-  * Container: :class:`Option[T]` with variants represented by truthiness
-    (``Some(x)`` is truthy, :data:`NONE` is falsy).
-  * Transformations: :meth:`Option.map`, :meth:`Option.flatmap`,
-    :meth:`Option.filter`.
-  * Extraction: :meth:`Option.unwrap`, :meth:`Option.unwrap_or`,
-    :meth:`Option.unwrap_or_else`, :meth:`Option.expect`,
-    :pyattr:`Option.value`.
-  * Mapping access: :meth:`Option.get` when the inner value is a
-    :class:`collections.abc.Mapping`.
-  * Construction helpers: :func:`Some`, :func:`maybe`, and the singleton
-    :data:`NONE`.
+    * Container: :class:`Option[T]` with variants represented by truthiness
+      (``Some(x)`` is truthy, :data:`NONE` is falsy).
+    * Transformations: :meth:`Option.map`, :meth:`Option.flatmap`,
+      :meth:`Option.filter`.
+    * Extraction: :meth:`Option.unwrap`, :meth:`Option.unwrap_or`,
+      :meth:`Option.unwrap_or_else`, :meth:`Option.expect`,
+      :pyattr:`Option.value`.
+    * Mapping access: :meth:`Option.get` when the inner value is a
+      :class:`collections.abc.Mapping`.
+    * Construction helpers: :func:`Some`, :func:`maybe`, and the singleton
+      :data:`NONE`.
 
 Public API:
-  * :class:`Option[T]`: The core optional container.
-  * :func:`Some`: Construct a ``Some`` value.
-  * :func:`maybe`: Construct ``Some(val)`` if ``val is not None``,
-    otherwise :data:`NONE`.
-  * :data:`NONE`: The singleton representing the absence of a value.
+    * :func:`maybe`: Construct ``Some(val)`` if ``val is not None``,
+      otherwise :data:`NONE`.
+    * :class:`Option[T]`: The core optional container.
+    * :func:`Some`: Construct a ``Some`` value.
+    * :data:`NONE`: The singleton representing the absence of a value.
 
 Key behaviors:
 
@@ -61,7 +63,7 @@ Transformations:
       Some(4)
       >>> Some(2).flatmap(lambda x: Some(x + 5))
       Some(7)
-      >>> NONE.map(lambda x: x)  # remains NONE
+      >>> NONE.map(lambda x: x)
       NONE
 
 Filtering:
@@ -91,10 +93,10 @@ Construction helpers:
       Some(0)
 
 Notes:
-  * Ordering: :data:`NONE` compares lower than any ``Some`` value; ``Some``
-    instances order by their inner values when comparable.
-  * The :class:`Option` constructor is internal; use :func:`Some`,
-    :func:`maybe`, or :data:`NONE` instead.
+    * Ordering: :data:`NONE` compares lower than any ``Some`` value; ``Some``
+      instances order by their inner values when comparable.
+    * The :class:`Option` constructor is internal; use :func:`Some`,
+      :func:`maybe`, or :data:`NONE` instead.
 
 """
 
@@ -113,9 +115,10 @@ from option.types_ import (
 
 
 class Option(Generic[T]):
-    """:py:class:`Option` represents an optional value. Every :py:class:`Option`
-    is either ``Some`` and contains a value, or :py:data:`NONE` and
-    does not.
+    """:py:class:`Option` represents an optional value.
+
+    Every :py:class:`Option` is either ``Some`` and contains a value, or
+    :py:data:`NONE` and does not.
 
     To create a ``Some`` value, please use :py:meth:`Option.Some` or
     :py:func:`Some`.
@@ -142,15 +145,13 @@ class Option(Generic[T]):
 
     __slots__ = ("_val", "_is_some", "_type")
 
-    # noinspection PyPep8Naming
     @classmethod
-    def NONE(cls) -> "Option[T]":
-        """No Value."""
+    def NONE(cls) -> "Option[T]":  # noqa N802
+        """Shortcut method to :py:data:`NONE`."""
         return cast("Option[T]", NONE)
 
-    # noinspection PyPep8Naming
     @classmethod
-    def Some(cls, val: T) -> "Option[T]":
+    def Some(cls, val: T) -> "Option[T]":  # noqa N802
         """Some value ``val``."""
         return cls(val, True, _force=True)
 
@@ -466,31 +467,31 @@ class Option(Generic[T]):
             return self._val
         raise ValueError("Value is NONE.")
 
-    def __bool__(self) -> bool:  # noqa: D105
+    def __bool__(self) -> bool:
         return self._is_some
 
-    def __eq__(self, other: object) -> bool:  # noqa: D105
+    def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, self._type)
             and self._is_some == other._is_some
             and self._val == other._val
         )
 
-    def __ge__(self: "Option[SupportsDunderGE]", other: object) -> bool:  # noqa: D105
+    def __ge__(self: "Option[SupportsDunderGE]", other: object) -> bool:
         if isinstance(other, self._type):
             if self._is_some == other._is_some:
                 return self._val >= other._val if self._is_some else True
             return self._is_some
         return NotImplemented
 
-    def __gt__(self: "Option[SupportsDunderGT]", other: object) -> bool:  # noqa: D105
+    def __gt__(self: "Option[SupportsDunderGT]", other: object) -> bool:
         if isinstance(other, self._type):
             if self._is_some == other._is_some:
                 return self._val > other._val if self._is_some else False
             return self._is_some
         return NotImplemented
 
-    def __hash__(self) -> int:  # noqa: D105
+    def __hash__(self) -> int:
         return hash((self.__class__, self._is_some, self._val))
 
     def __init__(
@@ -545,35 +546,29 @@ class Option(Generic[T]):
         self._is_some = is_some
         self._type = type(self)
 
-    def __le__(self: "Option[SupportsDunderLE]", other: object) -> bool:  # noqa: D105
+    def __le__(self: "Option[SupportsDunderLE]", other: object) -> bool:
         if isinstance(other, self._type):
             if self._is_some == other._is_some:
                 return self._val <= other._val if self._is_some else True
             return other._is_some
         return NotImplemented
 
-    def __lt__(self: "Option[SupportsDunderLT]", other: object) -> bool:  # noqa: D105
+    def __lt__(self: "Option[SupportsDunderLT]", other: object) -> bool:
         if isinstance(other, self._type):
             if self._is_some == other._is_some:
                 return self._val < other._val if self._is_some else False
             return other._is_some
         return NotImplemented
 
-    def __ne__(self, other: object) -> bool:  # noqa: D105
+    def __ne__(self, other: object) -> bool:
         return (
             not isinstance(other, self._type)
             or self._is_some != other._is_some
             or self._val != other._val
         )
 
-    def __repr__(self) -> str:  # noqa: D105
+    def __repr__(self) -> str:
         return "NONE" if self.is_none else f"Some({self._val!r})"
-
-
-# noinspection PyPep8Naming
-def Some(val: T) -> Option[T]:
-    """Shortcut function to :py:meth:`Option.Some`."""
-    return Option.Some(val)
 
 
 def maybe(val: Optional[T]) -> Option[T]:
@@ -582,6 +577,13 @@ def maybe(val: Optional[T]) -> Option[T]:
 
 
 NONE = Option(None, False, _force=True)
+"""Singleton representing the absence of a value."""
+
+
+def Some(val: T) -> Option[T]:  # noqa N802
+    """Shortcut function to :py:meth:`Option.Some`."""
+    return Option.Some(val)
+
 
 if __name__ == "__main__":
     import doctest

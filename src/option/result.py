@@ -411,17 +411,17 @@ class Result(Generic[T, E]):
         """
         return self._val if self._is_ok else op(self._val)  # type: ignore
 
-    def __bool__(self) -> bool:  # noqa: D105
+    def __bool__(self) -> bool:
         return self._is_ok
 
-    def __eq__(self, other: object) -> bool:  # noqa: D105
+    def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, self._type)
             and self._is_ok == other._is_ok
             and self._val == other._val
         )
 
-    def __ge__(  # noqa: D105
+    def __ge__(
         self: "Result[SupportsDunderGE, SupportsDunderGE]", other: object
     ) -> bool:
         if isinstance(other, self._type):
@@ -430,7 +430,7 @@ class Result(Generic[T, E]):
             return other._is_ok
         return NotImplemented
 
-    def __gt__(  # noqa: D105
+    def __gt__(
         self: "Result[SupportsDunderGT, SupportsDunderGT]", other: object
     ) -> bool:
         if isinstance(other, self._type):
@@ -439,7 +439,7 @@ class Result(Generic[T, E]):
             return other._is_ok
         return NotImplemented
 
-    def __hash__(self) -> int:  # noqa: D105
+    def __hash__(self) -> int:
         return hash((self._type, self._is_ok, self._val))
 
     def __init__(
@@ -485,7 +485,7 @@ class Result(Generic[T, E]):
         self._is_ok = is_ok
         self._type = type(self)
 
-    def __le__(  # noqa: D105
+    def __le__(
         self: "Result[SupportsDunderLE, SupportsDunderLE]", other: object
     ) -> bool:
         if isinstance(other, self._type):
@@ -494,7 +494,7 @@ class Result(Generic[T, E]):
             return self._is_ok
         return NotImplemented
 
-    def __lt__(  # noqa: D105
+    def __lt__(
         self: "Result[SupportsDunderLT, SupportsDunderLT]", other: object
     ) -> bool:
         if isinstance(other, self._type):
@@ -503,14 +503,14 @@ class Result(Generic[T, E]):
             return self._is_ok
         return NotImplemented
 
-    def __ne__(self, other: object) -> bool:  # noqa: D105
+    def __ne__(self, other: object) -> bool:
         return (
             not isinstance(other, self._type)
             or self._is_ok != other._is_ok
             or self._val != other._val
         )
 
-    def __repr__(self) -> str:  # noqa: D105
+    def __repr__(self) -> str:
         return f"Ok({self._val!r})" if self._is_ok else f"Err({self._val!r})"
 
 

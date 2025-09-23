@@ -21,7 +21,7 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://mat1g3r.github.io/option/"
+Homepage = "https://Dragonrun1.github.io/option/"
 Repository = "https://github.com/Dragonrun1/option"
 
 [project.scripts]
@@ -56,6 +56,7 @@ ignore = ["resources", "_dev"]
 include-naming-hint = true
 jobs = 0
 max-args = 6
+output-format = "github"
 overgeneral-exceptions = ["builtins.Exception"]
 
 [tool.pylint.main]
@@ -85,7 +86,7 @@ line-length = 80
 output-format = "grouped"
 required-version = ">=0.13.0,<1.0"
 src = ["src/*", "tests/*"]
-exclude = ["docs/*", "src/_dev/*"]
+exclude = ["doc_src/*"]
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -93,7 +94,7 @@ exclude = ["*.pyi"]
 
 [tool.ruff.lint]
 extend-select = ["D", "E", "I", "N", "R", "W"]
-ignore = ["D205"]
+ignore = ["D105", "D205"]
 
 [tool.ruff.lint.pep8-naming]
 extend-ignore-names = ["Err", "NONE", "Ok", "Some"]

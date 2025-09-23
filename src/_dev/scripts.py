@@ -13,9 +13,9 @@
 """Development scripts for running tests, building docs and linting.
 
 This module provides command-line entry points for common development tasks:
-- test_main: Run pytest with configuration from pyproject.toml
-- docs_main: Build HTML documentation using Sphinx
-- lint_main: Run code quality checks using Ruff and Pylint
+  * test_main: Run pytest with configuration from pyproject.toml
+  * docs_main: Build HTML documentation using Sphinx
+  * lint_main: Run code quality checks using Ruff, Pylint, and Mypy
 """
 
 from __future__ import annotations
@@ -60,13 +60,13 @@ def test_main() -> None:
 def docs_main() -> None:
     """Build HTML documentation using Sphinx.
 
-    Creates documentation in docs/_build/html directory and exits with
+    Use the ``conf.py`` and the ``*.rst`` files from the ``doc_src/`` directory
+    to generate the html documentation to the ``docs/`` directory and exits with
     build command's return code.
     """
-    # Build HTML docs into docs/_build/html
+    # Build HTML docs into docs/
+    doc_src = Path("doc_src")
     docs_dir = Path("docs")
-    build_dir = docs_dir / "_build" / "html"
-    build_dir.mkdir(parents=True, exist_ok=True)
     # Prefer module form to avoid relying on a specific sphinx-build path
     cmd = [
         sys.executable,
@@ -74,8 +74,8 @@ def docs_main() -> None:
         "sphinx.cmd.build",
         "-b",
         "html",
+        str(doc_src),
         str(docs_dir),
-        str(build_dir),
     ]
     code = _run(cmd)
     sys.exit(code)

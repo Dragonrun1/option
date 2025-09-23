@@ -20,3 +20,10 @@ option.result module
     :undoc-members:
     :show-inheritance:
 
+option.types\_ module
+--------------------
+
+.. automodule:: option.types_
+    :members:
+    :undoc-members:
+    :show-inheritance:
