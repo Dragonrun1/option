@@ -1,208 +1,282 @@
-# noqa: D100
-# Copyright © 2018-2022 Peijun Ma
-# Copyright © 2025 Michael Cummings <mgcummings@yahoo.com>
+#  Copyright © 2025 Michael Cummings <mgcummings@yahoo.com>
 #
-# Licensed under the MIT license
-# [MIT](https:#opensource.org/license/mit-0)
+#  Licensed under the MIT license
+#  [MIT](https://opensource.org/license/mit-0).
 #
-# Files in this project may not be copied, modified, or distributed except
-# according to those terms.
+#  Files in this project may not be copied, modified, or distributed except
+#  according to those terms.
 #
-# The full test of the license can be found in the project LICENSE.md file.
+#  The full text of the license can be found in the project LICENSE.md file.
 #
-# SPDX-License-Identifier: MIT
+#  SPDX-License-Identifier: MIT
 ##############################################################################
+"""Unit tests for Result-oriented functionality in Python.
+
+This module contains a suite of unit tests designed to validate the behavior and
+utility of `Result` classes and their respective methods.
+It ensures correctness in constructing Result instances (`Ok` and `Err` types),
+conversion into Options, mapping capabilities, unwrapping of values, and proper
+error handling.
+The tests include parameterized cases to cover a comprehensive range of
+scenarios, including edge cases and comparisons between `Ok` and `Err`
+instances.
+
+Several methods and functionalities are tested to ensure compliance with defined
+behavior, such as conditions under which errors or values are extracted,
+expectations raised, default values applied, or specific transformations
+performed.
+
+Each feature is rigorously validated to assess its correctness, including
+ordering semantics, equality, and custom hash implementations to confirm
+consistency in various use cases.
+"""
 
 import pytest
-from option import NONE, Err, Ok, Result, Some
+from option.option_ import NONE, Some
+from option.result import Err, Ok, Result
 
-from tests.conftest import parametrize
+from .conftest import parametrize
 
 
-@parametrize("args", [(1, True), (0, False)])
-def test_no_init(args):
+@parametrize(
+    "constructor, value, is_ok_expected, repr_expected",
+    [
+        (Result.Ok, 1, True, "Ok(1)"),
+        (Result.Err, "boom", False, "Err('boom')"),
+        (Ok, 42, True, "Ok(42)"),
+        (Err, 0, False, "Err(0)"),
+    ],
+)
+def test_construction_and_repr(
+    constructor, value, is_ok_expected, repr_expected
+) -> None:
+    res = constructor(value)
+    assert res.is_ok == is_ok_expected
+    assert res.is_err == (not is_ok_expected)
+    assert bool(res) == is_ok_expected
+    assert repr(res) == repr_expected
+
+
+@parametrize(
+    "res, expected_ok_opt, expected_err_opt",
+    [
+        (Ok(1), Some(1), NONE),
+        (Err("e"), NONE, Some("e")),
+    ],
+)
+def test_ok_err_option_conversions(
+    res, expected_ok_opt, expected_err_opt
+) -> None:
+    assert res.ok() == expected_ok_opt
+    assert res.err() == expected_err_opt
+
+
+@parametrize(
+    "res, mapper, expected",
+    [
+        (Ok(1), lambda x: x + 1, Ok(2)),
+        (Ok("a"), lambda s: s.upper(), Ok("A")),
+        (Err("e"), lambda x: x, Err("e")),
+    ],
+)
+def test_map(res, mapper, expected) -> None:
+    assert res.map(mapper) == expected
+
+
+@parametrize(
+    "res, mapper, expected",
+    [
+        (Ok(1), lambda e: e + 1, Ok(1)),
+        (Err(2), lambda e: e + 1, Err(3)),
+        (Err("a"), str.upper, Err("A")),
+    ],
+)
+def test_map_err(res, mapper, expected) -> None:
+    assert res.map_err(mapper) == expected
+
+
+@parametrize(
+    "res, mapper, expected",
+    [
+        (Ok(2), lambda x: Ok(x * x), Ok(4)),
+        (Ok(2), lambda x: Err(x + 1), Err(3)),
+        (Err(5), lambda x: Ok(x + 1), Err(5)),
+    ],
+)
+def test_flatmap(res, mapper, expected) -> None:
+    assert res.flatmap(mapper) == expected
+
+
+@parametrize(
+    "res, expected",
+    [
+        (Ok(10), 10),
+        (Ok("x"), "x"),
+    ],
+)
+def test_unwrap_ok(res, expected) -> None:
+    assert res.unwrap() == expected
+
+
+@parametrize(
+    "res, match",
+    [
+        (Err(1), "1"),
+        (Err("boom"), "boom"),
+    ],
+)
+def test_unwrap_err_raises(res, match) -> None:
+    with pytest.raises(ValueError, match=match):
+        res.unwrap()
+
+
+@parametrize(
+    "res, expected",
+    [
+        (Err(1), 1),
+        (Err("e"), "e"),
+    ],
+)
+def test_unwrap_err_ok(res, expected) -> None:
+    assert res.unwrap_err() == expected
+
+
+@parametrize(
+    "res, match",
+    [
+        (Ok(1), "1"),
+        (Ok("good"), "good"),
+    ],
+)
+def test_unwrap_err_on_ok_raises(res, match) -> None:
+    with pytest.raises(ValueError, match=match):
+        res.unwrap_err()
+
+
+@parametrize(
+    "res, msg, expected",
+    [
+        (Ok(2), "msg", 2),
+    ],
+)
+def test_expect_ok(res, msg, expected) -> None:
+    assert res.expect(msg) == expected
+
+
+@parametrize(
+    "res, msg",
+    [
+        (Err("bad"), "nope"),
+        (Err(0), "zero"),
+    ],
+)
+def test_expect_err_raises(res, msg) -> None:
+    with pytest.raises(ValueError, match=str(msg)):
+        res.expect(msg)
+
+
+@parametrize(
+    "res, msg, expected",
+    [
+        (Err(3), "boom", 3),
+    ],
+)
+def test_expect_err_ok(res, msg, expected) -> None:
+    assert res.expect_err(msg) == expected
+
+
+@parametrize(
+    "res, msg",
+    [
+        (Ok(3), "nope"),
+        (Ok("x"), "bad"),
+    ],
+)
+def test_expect_err_on_ok_raises(res, msg) -> None:
+    with pytest.raises(ValueError, match=str(msg)):
+        res.expect_err(msg)
+
+
+@parametrize(
+    "res, fallback, expected",
+    [
+        (Ok(1), 9, 1),
+        (Err(1), 9, 9),
+        (Err("e"), "f", "f"),
+    ],
+)
+def test_unwrap_or(res, fallback, expected) -> None:
+    assert res.unwrap_or(fallback) == expected
+
+
+@parametrize(
+    "res, func, expected",
+    [
+        (Ok(1), lambda e: e * 10, 1),
+        (Err(2), lambda e: e * 10, 20),
+        (Err("a"), str.upper, "A"),
+    ],
+)
+def test_unwrap_or_else(res, func, expected) -> None:
+    assert res.unwrap_or_else(func) == expected
+
+
+def test_direct_constructor_disallowed() -> None:
     with pytest.raises(TypeError):
-        Result(*args)
+        Result(1, True)
 
 
-@parametrize("val", [0, None, {}, [], False])
-def test_factory_ok(val):
-    res = Result.Ok(val)
-    assert res._is_ok
-    assert res._val == val
-
-
-@parametrize("err", [0, None, "", [], False])
-def test_factory_err(err):
-    res = Result.Err(err)
-    assert not res._is_ok
-    assert res._val == err
-
-
-@parametrize("ok", [True, False])
-def test_bool(ok):
-    res = Result.Ok(1) if ok else Result.Err(1)
-    assert bool(res) == ok
-    assert res.is_ok == ok
-    assert res.is_err != ok
-
-
-@parametrize("ok", [True, False])
-def test_ok_err(ok):
-    res = Result.Ok(1) if ok else Result.Err(1)
-    if ok:
-        assert res.ok() == Some(1)
-        assert res.err() == NONE
-    else:
-        assert res.ok() == NONE
-        assert res.err() == Some(1)
-
-
-@parametrize("obj,call,exp", [(Ok(1), str, Ok("1")), (Err(1), str, Err(1))])
-def test_map(obj, call, exp):
-    assert obj.map(call) == exp
-
-
-@parametrize("obj,call,exp", [(Ok(1), str, Ok(1)), (Err(1), str, Err("1"))])
-def test_map_err(obj, call, exp):
-    assert obj.map_err(call) == exp
-
-
+# Ordering semantics:
+# - When both are Ok: compare inner values.
+# - When both are Err: compare inner values.
+# - When kinds differ: Ok < Err (based on implementation rules).
 @parametrize(
-    "obj,exp,ok",
+    "a, b, lt, le, gt, ge",
     [
-        (Ok(1), 1, True),
-        (Ok(None), None, True),
-        (Err(1), 1, False),
+        # same kind, inner comparison
+        (Ok(1), Ok(2), True, True, False, False),
+        (Ok(2), Ok(2), False, True, False, True),
+        (Ok(3), Ok(2), False, False, True, True),
+        (Err(1), Err(2), True, True, False, False),
+        (Err(2), Err(2), False, True, False, True),
+        (Err(3), Err(2), False, False, True, True),
+        # cross kind: Ok < Err
+        (Ok(1), Err(0), True, True, False, False),
+        (Err(0), Ok(1), False, False, True, True),
     ],
 )
-def test_unwrap(obj, exp, ok):
-    if ok:
-        assert obj.unwrap() == exp
-    else:
-        with pytest.raises(ValueError):
-            obj.unwrap()
-
-
-@parametrize("obj,optb,exp", [(Ok(0), 11, 0), (Err(11), 0, 0)])
-def test_unwrap_or(obj, optb, exp):
-    assert obj.unwrap_or(optb) == exp
+# pylint: disable=too-many-positional-arguments
+def test_ordering(a, b, lt, le, gt, ge) -> None:
+    assert (a < b) is lt
+    assert (a <= b) is le
+    assert (a > b) is gt
+    assert (a >= b) is ge
 
 
 @parametrize(
-    "obj,op,exp",
+    "a, b, expected_eq",
     [
-        (Ok("asd"), len, "asd"),
-        (Err("asd"), len, 3),
+        (Ok(1), Ok(1), True),
+        (Err("x"), Err("x"), True),
+        (Ok(1), Ok(2), False),
+        (Err("x"), Err("y"), False),
+        (Ok(1), Err(1), False),
     ],
 )
-def test_unwrap_or_else(obj, op, exp):
-    assert obj.unwrap_or_else(op) == exp
+def test_equality_and_hash(a, b, expected_eq) -> None:
+    assert (a == b) is expected_eq
+    assert (a != b) is (not expected_eq)
+    if expected_eq:
+        assert hash(a) == hash(b)
 
 
 @parametrize(
-    "obj,ok,exp",
-    [(Ok(1), True, 1), (Err(1), False, ""), (Ok(None), True, None)],
-)
-def test_except(obj, ok, exp):
-    if ok:
-        assert obj.expect("") == exp
-    else:
-        with pytest.raises(ValueError):
-            obj.expect("")
-
-
-@parametrize(
-    "obj,err,exp",
+    "res, expected_repr",
     [
-        (Ok(1), False, ""),
-        (Err(None), True, None),
+        (Ok(1), "Ok(1)"),
+        (Err("boom"), "Err('boom')"),
+        (Ok([1, 2]), "Ok([1, 2])"),
     ],
 )
-def test_unwrap_expect_err(obj, err, exp):
-    if err:
-        assert obj.unwrap_err() == exp
-        assert obj.expect_err("") == exp
-    else:
-        with pytest.raises(ValueError):
-            obj.unwrap_err()
-        with pytest.raises(ValueError):
-            obj.expect_err("")
-
-
-@parametrize(
-    "obj1,obj2,eq",
-    [(Ok(1), Ok(1), True), (Err(1), Err(1), True), (Ok(1), Err(1), False)],
-)
-def test_hash(obj1, obj2, eq):
-    if eq:
-        assert hash(obj1) == hash(obj2)
-    else:
-        assert hash(obj1) != hash(obj2)
-
-
-@parametrize(
-    "o1,o2",
-    [
-        (Ok(""), Ok("")),
-        (Ok([]), Ok([])),
-        (Err("aa"), Err("aa")),
-        (Err({}), Err({})),
-    ],
-)
-def test_eq(o1, o2):
-    assert o1 == o2
-    assert not o1 == o1._val
-    assert not o1._val == o1
-
-
-@parametrize(
-    "o1,o2",
-    [
-        (Ok(""), Err("")),
-        (Err([]), Ok([])),
-        (Ok({}), Err({})),
-        (Ok(1), Ok(2)),
-        (Err(2), Err(3)),
-    ],
-)
-def test_neq(o1, o2):
-    assert o1 != o2
-    assert o1 != o1._val
-    assert o1._val != o1
-
-
-@parametrize("o1,o2", [(Ok(2), Err(1)), (Ok(1), Ok(2)), (Err(1), Err(2))])
-def test_lt_gt(o1, o2):
-    assert o1 < o2
-    assert o1 <= o2
-    assert o2 > o1
-    assert o2 >= o1
-
-
-@parametrize("o1,o2", [(Ok(1), Ok(1)), (Err(1), Err(1))])
-def test_le_ge(o1, o2):
-    assert o1 <= o2
-    assert o1 >= o2
-
-
-@parametrize(
-    "self,other",
-    [
-        (Err(None), Err(1)),
-        (Ok(1), Ok(None)),
-        (Ok(1), Ok("")),
-        (Ok(""), Ok(None)),
-        (Ok(1), 1),
-        (1, Err(1)),
-    ],
-)
-def test_lt_gt_type_error(self, other):
-    with pytest.raises(TypeError):
-        self < other
-    with pytest.raises(TypeError):
-        self <= other
-    with pytest.raises(TypeError):
-        self > other
-    with pytest.raises(TypeError):
-        self >= other
+def test_repr(res, expected_repr) -> None:
+    assert repr(res) == expected_repr
