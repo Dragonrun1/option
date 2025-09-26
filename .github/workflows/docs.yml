@@ -15,7 +15,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow}}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
@@ -32,6 +32,11 @@ jobs:
 
       - name: Install the project (with docs deps)
         run: uv sync -g dev
+
+      - name: Configure Git author
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Build and publish Sphinx docs to gh-pages
         env:

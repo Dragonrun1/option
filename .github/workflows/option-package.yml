@@ -16,21 +16,28 @@ jobs:
         python-version: [ "3.12", "3.13" ]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
-          version: "0.8.20"
+          version: "0.8.22"
+
       - name: Install Venv
         run: uv venv
-      - name: Install the project
-        run: uv sync --locked --all-extras --dev
+
+      - name: Install the project (dev groups)
+        run: uv sync -g dev
+
       - name: Lint
         run: uv run dev-lint
+
       - name: Test
         run: uv run dev-test
+
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v5
         with:
