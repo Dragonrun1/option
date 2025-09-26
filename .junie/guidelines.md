@@ -114,6 +114,37 @@ These scripts are available after the package is installed (editable or wheel). 
   - Reference: https://gitmoji.dev for the canonical list and meanings.
   - Avoid WIP commits; squash or amend before opening PRs.
 
+9) Exceptions and error handling
+- Do NOT catch broad exceptions like Exception or BaseException in try/except blocks. Catch the most specific exception types you expect from the guarded code.
+  - Rationale: broad catches hide real bugs, make debugging harder, and fight our linters. This repo enforces pylint's overgeneral-exceptions = ["builtins.Exception"] in pyproject.toml.
+- Preferred patterns:
+  - Use specific exception types (e.g., FileNotFoundError, ValueError, KeyError).
+  - Use try/finally or context managers to guarantee cleanup instead of broad excepts.
+  - Use contextlib.suppress(...) for intentionally ignored, specific exceptions.
+- Limited, justified exceptions to the rule:
+  - Top-level CLI or workflow entry points may catch Exception to log and exit non‑zero. Keep the scope minimal, re‑raise or sys.exit(1), and document the rationale with a comment.
+  - If a truly unavoidable broad catch is needed (e.g., within a cleanup shim), immediately re‑raise after handling and include a short justification. Prefer listing concrete exceptions instead.
+- Examples:
+  - Bad:
+    try:
+        risky()
+    except Exception:
+        handle()
+  - Good:
+    try:
+        risky()
+    except (FileNotFoundError, PermissionError) as ex:
+        handle(ex)
+
+  - Good with logging and re-raise:
+    try:
+        risky()
+    except ValueError as ex:
+        logger.error("invalid input: %s", ex)
+        raise
+
+- Tests should assert specific exceptions with pytest.raises(ExpectedError) rather than catching Exception.
+
 Troubleshooting tips specific to this repo
 - If tests are skipped or doctests not collected, confirm you are running Python 3.12–3.13 and executing pytest from the project root so testpaths are honored.
 - If Sphinx builds fail due to theme or smv errors, ensure docs deps are installed (use uv sync --group dev). Prefer the safe local Sphinx invocation shown above rather than _dev.docs.
