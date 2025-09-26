@@ -81,7 +81,8 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
         out = repo.git.ls_remote("--heads", "origin", "gh-pages")
         gh_exists_remote = bool(out.strip())
     except GitCommandError:
-        # Treat errors querying remote as non-existent branch; will be created on publish
+        # Treat errors querying remote as non-existent branch;
+        # will be created on publish
         gh_exists_remote = False
     if gh_exists_remote:
         print("[INFO] Remote 'gh-pages' branch exists.")
