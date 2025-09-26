@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 
 from git import Repo
+from git.exc import GitCommandError
 from option import Option
 
 from _dev import _find_project_root, _run
@@ -79,13 +80,15 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
     try:
         out = repo.git.ls_remote("--heads", "origin", "gh-pages")
         gh_exists_remote = bool(out.strip())
-    except Exception:
+    except GitCommandError:
+        # Treat errors querying remote as non-existent branch; will be created on publish
         gh_exists_remote = False
     if gh_exists_remote:
         print("[INFO] Remote 'gh-pages' branch exists.")
     else:
         print(
-            "[INFO] Remote 'gh-pages' branch does not exist; it will be created on first publish."
+            "[INFO] Remote 'gh-pages' branch does not exist;"
+            " it will be created on first publish."
         )
 
     ghp_dir = root / ".gh-pages"
@@ -127,9 +130,13 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
         # Use a generic commit message; ignore if nothing to commit
         try:
             repo.git.commit("-m", "Update Sphinx docs")
-        except Exception:
-            # Nothing to commit
-            pass
+        except GitCommandError as ex:
+            # Ignore the common case of no changes to commit; re-raise others
+            msg = str(ex).lower()
+            if "nothing to commit" in msg or "nothing added to commit" in msg:
+                pass
+            else:
+                raise
         # Push branch
         repo.git.push("origin", "gh-pages")
     # Clean up the worktree directory
