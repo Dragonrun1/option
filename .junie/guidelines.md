@@ -12,7 +12,7 @@ Recommended setup with uv
   - pipx install uv  (preferred)
   - or: python -m pip install uv
 - From the project root, create a venv and sync dev dependencies:
-  - uv sync -g dev
+  - uv sync --group dev
     - This resolves and installs all dependency groups required for development (docs, lint, test) and the package in editable mode.
 - Use uv run to execute tools inside the environment:
   - uv run pytest
@@ -116,7 +116,7 @@ These scripts are available after the package is installed (editable or wheel). 
 
 Troubleshooting tips specific to this repo
 - If tests are skipped or doctests not collected, confirm you are running Python 3.12–3.13 and executing pytest from the project root so testpaths are honored.
-- If Sphinx builds fail due to theme or smv errors, ensure docs deps are installed (use uv sync -g dev). Prefer the safe local Sphinx invocation shown above rather than _dev.docs.
+- If Sphinx builds fail due to theme or smv errors, ensure docs deps are installed (use uv sync --group dev). Prefer the safe local Sphinx invocation shown above rather than _dev.docs.
 - If dev scripts are not found, ensure the environment has the package installed and the environment’s bin directory is on PATH, or use uv run <script>.
 
 Status of demo verification for this guideline

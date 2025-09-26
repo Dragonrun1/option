@@ -30,7 +30,7 @@ jobs:
         run: uv venv
 
       - name: Install the project (dev groups)
-        run: uv sync -g dev
+        run: uv sync --group dev
 
       - name: Lint
         run: uv run dev-lint

@@ -31,7 +31,7 @@ jobs:
         run: uv venv
 
       - name: Install the project (with docs deps)
-        run: uv sync -g dev
+        run: uv sync --group dev
 
       - name: Configure Git author
         run: |
