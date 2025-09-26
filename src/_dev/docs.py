@@ -74,6 +74,20 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
     This keeps the main working tree clean and is safe to run in CI.
     """
     repo = Repo(root)
+    # Informational check: does the remote 'gh-pages' branch exist?
+    gh_exists_remote = False
+    try:
+        out = repo.git.ls_remote("--heads", "origin", "gh-pages")
+        gh_exists_remote = bool(out.strip())
+    except Exception:
+        gh_exists_remote = False
+    if gh_exists_remote:
+        print("[INFO] Remote 'gh-pages' branch exists.")
+    else:
+        print(
+            "[INFO] Remote 'gh-pages' branch does not exist; it will be created on first publish."
+        )
+
     ghp_dir = root / ".gh-pages"
     # Clean worktree dir if present
     if ghp_dir.exists():
