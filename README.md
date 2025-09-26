@@ -16,7 +16,7 @@ Using a `Result` type simplifies error handling and reduces `try` `except` block
 
 ## Quick Start
 
-```Python
+```python
 from option import Result, Option, Ok, Err
 from requests import get
 
@@ -43,7 +43,7 @@ pip install option
 ```
 
 ## Documentation
-The documentation lives at https://mat1g3r.github.io/option/
+The documentation lives at https://Dragonrun1.github.io/option/
 
 ## License
 MIT
