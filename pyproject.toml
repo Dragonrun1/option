@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "option"
-version = "2.1.1"
+version = "2.1.2"
 description = "Rust like Option and Result types in Python"
 authors = [
     { name = "Peijun Ma", email = "peijun.ma@protonmail.com" },
@@ -25,7 +25,6 @@ Homepage = "https://Dragonrun1.github.io/option/"
 Repository = "https://github.com/Dragonrun1/option"
 
 [project.scripts]
-ci-ghp = "_dev.ci:gh_pages"
 dev-test = "_dev.test:test_main"
 dev-docs = "_dev.docs:docs_main"
 dev-lint = "_dev.lint:lint_main"
@@ -39,6 +38,7 @@ dev = [
 ]
 docs = [
     "gitpython>=3.1.45",
+    "pydata-sphinx-theme>=0.16.1",
     "sphinx>=8.2.3",
     "sphinx-multiversion>=0.2.4",
 ]
