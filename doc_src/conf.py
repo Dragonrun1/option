@@ -87,7 +87,15 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    # Exclude redundant per-module pages (we document modules via option.rst)
+    "option.option_.rst",
+    "option.result.rst",
+    "option.types_.rst",
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None

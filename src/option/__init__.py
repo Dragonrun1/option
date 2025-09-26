@@ -51,8 +51,8 @@ Functions:
     (``NONE`` or ``Some``).
 
 See Also:
-  * option.option_: ``Option`` implementation and utilities.
-  * option.result: ``Result`` implementation and utilities.
+  * :mod:`option.option_`: ``Option`` implementation and utilities.
+  * :mod:`option.result`: ``Result`` implementation and utilities.
 """
 
 from .option_ import NONE, Option, Some, maybe
