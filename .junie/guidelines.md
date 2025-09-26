@@ -103,6 +103,17 @@ These scripts are available after the package is installed (editable or wheel). 
   - uv build
 - If you need wheels/sdist via standard tools, ensure uv_build is available. Publishing to PyPI is out of scope here, but uv publish is supported if configured.
 
+8) Commit messages
+- Use gitmoji-style commit messages for all commits. Begin the subject with a suitable gitmoji code or emoji, followed by a concise, imperative summary. Keep the subject under ~72 characters.
+  - Examples:
+    - :sparkles: Add map_or_else helper to Option
+    - :bug: Fix Result comparison for None values
+    - :memo: Update docs for Option.unwrap behavior
+    - :recycle: Refactor Result ordering logic
+  - Optional scope in parentheses after the emoji is fine, e.g., :sparkles: (option) Add map_or_else
+  - Reference: https://gitmoji.dev for the canonical list and meanings.
+  - Avoid WIP commits; squash or amend before opening PRs.
+
 Troubleshooting tips specific to this repo
 - If tests are skipped or doctests not collected, confirm you are running Python 3.12–3.13 and executing pytest from the project root so testpaths are honored.
 - If Sphinx builds fail due to theme or smv errors, ensure docs deps are installed (use uv sync -g dev). Prefer the safe local Sphinx invocation shown above rather than _dev.docs.
