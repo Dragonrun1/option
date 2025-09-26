@@ -1,0 +1,40 @@
+name: Publish Sphinx Documentation
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish_sphinx_docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow}}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.13"
+          version: "0.8.22"
+
+      - name: Install Venv
+        run: uv venv
+
+      - name: Install the project (with docs deps)
+        run: uv sync -g dev
+
+      - name: Build and publish Sphinx docs to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run dev-docs --publish

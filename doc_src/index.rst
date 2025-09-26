@@ -6,11 +6,17 @@
 Welcome to option's documentation!
 ==================================
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+This package provides lightweight algebraic data types inspired by Rust's
+``Option`` and ``Result`` for expressive, safe handling of absence and error
+conditions.
 
-   option
+
+..  toctree::
+    :maxdepth: 2
+    :caption: Contents:
+
+    api
+    modules
 
 
 Indices and tables
