@@ -102,6 +102,10 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
                 shutil.copytree(item, dest)
             else:
                 shutil.copy2(item, dest)
+        # Ensure a friendly landing page exists at the site root
+        index_tpl = root / "doc_src" / "_templates" / "_index.html"
+        if index_tpl.exists():
+            shutil.copy2(index_tpl, ghp_dir / "index.html")
         # Ensure no Jekyll processing on GitHub Pages
         (ghp_dir / ".nojekyll").write_text("\n", encoding="utf-8")
         # Commit and push
@@ -172,6 +176,12 @@ def docs_main() -> None:
     root: Path = root_opt.unwrap()
 
     source = (root / args.source).resolve()
+
+    # If building multiversion and the default output is still in use,
+    # place versions directly under docs/ (docs/main is for single-version).
+    if args.multiversion and args.output == "docs/main":
+        args.output = "docs"
+
     output = (root / args.output).resolve()
 
     if not source.exists():

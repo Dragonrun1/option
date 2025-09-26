@@ -1,0 +1,56 @@
+<!-- Copyright © 2025 Michael Cummings <mgcummings@yahoo.com> -->
+<!-- -->
+<!-- Licensed under the MIT license -->
+<!-- [MIT](https://opensource.org/license/mit-0). -->
+<!-- -->
+<!-- Files in this project may not be copied, modified, or distributed except -->
+<!-- according to those terms. -->
+<!-- -->
+<!-- The full text of the license can be found in the project LICENSE.md file. -->
+<!-- -->
+<!-- SPDX-License-Identifier: MIT -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>option documentation</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      margin: 0; padding: 2rem; line-height: 1.5;
+    }
+    header { margin-bottom: 1.5rem; }
+    h1 { font-size: 1.8rem; margin: 0 0 0.5rem; }
+    .versions { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
+    a { text-decoration: none; }
+    .muted { opacity: .8; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>option documentation</h1>
+    <p>Select a documentation version below. The "main" docs track the latest development on the main branch. Versioned docs correspond to released tags.</p>
+  </header>
+
+  <section class="versions">
+    <div class="card">
+      <h2><a href="./main/">main</a></h2>
+      <p class="muted">Latest development docs from the main branch.</p>
+    </div>
+    <!--
+      Versioned docs (tags) are built under ./vX.Y.Z/ by the multiversion build.
+      You can add additional quick links here if desired, but users can always
+      navigate to any version directly via URL: ./vMAJOR.MINOR.PATCH/
+    -->
+  </section>
+
+  <footer style="margin-top: 2rem" class="muted">
+    <p>Built with Sphinx and published via GitHub Pages.</p>
+  </footer>
+</body>
+</html>

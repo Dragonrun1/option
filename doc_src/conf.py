@@ -129,6 +129,8 @@ html_theme_options = {
     ],
     "icon_links_label": "Quick Links",
     "navbar_align": "content",
+    # Put the version switcher and theme switcher at the end of the navbar
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "primary_sidebar_end": ["indices.html", "sidebar-ethical-ads.html"],
     "show_version_warning_banner": True,
 }

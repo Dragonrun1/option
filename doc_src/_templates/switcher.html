@@ -1,0 +1,35 @@
+{#
+  Override for pydata-sphinx-theme version switcher that uses
+  sphinx-multiversion's injected `versions` and `current_version`.
+  Place under doc_src/_templates/switcher.html.
+#}
+{% if versions and current_version %}
+<!-- Copyright © 2025 Michael Cummings <mgcummings@yahoo.com> -->
+<!-- -->
+<!-- Licensed under the MIT license -->
+<!-- [MIT](https://opensource.org/license/mit-0). -->
+<!-- -->
+<!-- Files in this project may not be copied, modified, or distributed except -->
+<!-- according to those terms. -->
+<!-- -->
+<!-- The full text of the license can be found in the project LICENSE.md file. -->
+<!-- -->
+<!-- SPDX-License-Identifier: MIT -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<li class="nav-item dropdown">
+  <button class="btn btn-sm navbar-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {{ current_version.name | e }}
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li class="dropdown-header">Versions</li>
+    {% for v in versions %}
+      <li>
+        <a class="dropdown-item{% if v.name == current_version.name %} active{% endif %}" href="{{ v.url }}">
+          {{ v.name | e }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</li>
+{% endif %}
