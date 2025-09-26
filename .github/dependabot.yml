@@ -1,11 +1,55 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# Dependabot configuration for this repository
+# Docs: https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
 updates:
-  - package-ecosystem: "uv" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Keep Python dependencies (managed by uv/pyproject.toml) up to date
+  - package-ecosystem: "uv"
+    directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      # Use gitmoji-style prefix per repo guidelines
+      prefix: ":arrow_up: deps"
+      include: "scope"
+    groups:
+      # Group routine tooling upgrades to reduce PR noise
+      tooling:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "bump2version"
+          - "gitpython"
+          - "mypy"
+          - "pylint"
+          - "pylint-per-file-ignores"
+          - "ruff"
+          - "ty"
+          - "pytest*"
+          - "xdoctest"
+          - "sphinx*"
+          - "pydata-sphinx-theme"
+
+  # Keep GitHub Actions up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "CI/CD"
+      - "dependencies"
+    commit-message:
+      prefix: ":arrow_up: ci"
+      include: "scope"
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
+        patterns: ["*"]
