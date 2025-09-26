@@ -229,7 +229,7 @@ epub_exclude_files = ["search.html"]
 
 # sphinx-multiversion configuration: build main branch and SemVer tags
 smv_branch_whitelist = r"^main$"
-smv_tag_whitelist = r"^\d+\.\d+\.\d+$"
+smv_tag_whitelist = r"^v?\d+\.\d+\.\d+$"
 smv_latest_version = "main"
 
 # -- Options for todo extension ----------------------------------------------
