@@ -258,7 +258,7 @@ class Option(Generic[T]):
 
         Args:
             key: The mapping key.
-            default: The defauilt value.
+            default: The default value.
 
         Returns:
             * `Some` variant of the mapping value if the key exists

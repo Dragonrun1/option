@@ -13,26 +13,23 @@
 ##############################################################################
 """Result type utilities for explicit success/error handling.
 
-This module defines a generic :class:`Result` that represents either success
-(:meth:`Result.Ok`) or failure (:meth:`Result.Err`). It provides ergonomic,
-exception-free workflows for transforming and extracting values, inspired by
-Rust’s ``Result``.
+This module defines a generic `Result` that represents either success
+(`Result.Ok`) or failure (`Result.Err`).
+It provides ergonomic, exception-free workflows for transforming and extracting
+values, inspired by Rust's `Result`.
 
 Exports:
-  * :class:`Result` — The core container type.
-  * :func:`Ok` — Convenience constructor for a success result.
-  * :func:`Err` — Convenience constructor for an error result.
+  * `Result` — The core container type.
+  * `Ok` — Convenience constructor for a success result.
+  * `Err` — Convenience constructor for an error result.
 
 Highlights:
-  * Introspection: :pyattr:`Result.is_ok`, :pyattr:`Result.is_err`,
-    truthiness (``Ok`` is truthy).
-  * Conversions: :meth:`Result.ok` and :meth:`Result.err` interoperate with
-    :class:`option.option_.Option`.
-  * Transformations: :meth:`Result.map`, :meth:`Result.flatmap`,
-    :meth:`Result.map_err`.
-  * Extraction: :meth:`Result.unwrap`, :meth:`Result.unwrap_or`,
-    :meth:`Result.unwrap_or_else`, :meth:`Result.expect`,
-    :meth:`Result.unwrap_err`, :meth:`Result.expect_err`.
+  * Introspection: `Result.is_ok`, `Result.is_err`, truthiness (`Ok` is truthy).
+  * Conversions: `Result.ok` and `Result.err` interoperate with
+    `option.option_.Option`.
+  * Transformations: `Result.map`, `Result.flatmap`, `Result.map_err`.
+  * Extraction: `Result.unwrap`, `Result.unwrap_or`, `Result.unwrap_or_else`,
+    `Result.expect`, `Result.unwrap_err`, `Result.expect_err`.
 
 The API is fully type-annotated and designed to integrate cleanly with static
 type checkers and functional-style workflows.
@@ -69,14 +66,14 @@ from option.types_ import (
 
 
 class Result(Generic[T, E]):
-    """:class:`Result` is a type that either success (:meth:`Result.Ok`)
-    or failure (:meth:`Result.Err`).
+    """`Result` is a type that either success (`Result.Ok`)
+    or failure (`Result.Err`).
 
-    To create an Ok value, use :meth:`Result.Ok` or :func:`Ok`.
+    To create an Ok value, use `Result.Ok` or `Ok`.
 
-    To create an Err value, use :meth:`Result.Err` or :func:`Err`.
+    To create an Err value, use `Result.Err` or `Err`.
 
-    Calling the :class:`Result` constructor directly will raise a ``TypeError``.
+    Calling the `Result` constructor directly will raise a ``TypeError``.
 
     Examples:
         >>> Result.Ok(1)
@@ -96,7 +93,7 @@ class Result(Generic[T, E]):
             err: The error value.
 
         Returns:
-            The :class:`Result` containing the error value.
+            The `Result` containing the error value.
 
         Examples:
             >>> res = Result.Err("Oh No")
@@ -117,7 +114,7 @@ class Result(Generic[T, E]):
             val (T): The success value.
 
         Returns:
-             The :class:`Result` containing the success value.
+             The `Result` containing the success value.
 
         Examples:
             >>> res = Result.Ok(1)
@@ -130,12 +127,12 @@ class Result(Generic[T, E]):
         return cls(val, True, _force=True)
 
     def err(self) -> Option[E]:
-        """Converts from :class:`Result` [T, E] to
-        :class:`option.option_.Option` [E].
+        """Converts from `Result` [T, E] to
+        `option.option_.Option` [E].
 
         Returns:
-            :class:`Option` containing the error value if `self` is
-            :meth:`Result.Err`, otherwise :data:`option.option_.NONE`.
+            `Option` containing the error value if `self` is
+            `Result.Err`, otherwise `option.option_.NONE`.
 
         Examples:
             >>> Ok(1).err()
@@ -147,19 +144,19 @@ class Result(Generic[T, E]):
         return NONE if self._is_ok else Option.Some(self._val)  # type: ignore
 
     def expect(self, msg: object) -> T:
-        """Returns the success value in the :class:`Result` or raises
+        """Returns the success value in the `Result` or raises
         a ``ValueError`` with a provided message.
 
         Args:
             msg: The error message.
 
         Returns:
-            The success value in the :class:`Result` if it is
-            a :meth:`Result.Ok` value.
+            The success value in the `Result` if it is
+            a `Result.Ok` value.
 
         Raises:
             ``ValueError`` with ``msg`` as the message if the
-            :class:`Result` is a :meth:`Result.Err` value.
+            `Result` is a `Result.Err` value.
 
         Examples:
             >>> Ok(1).expect("no")
@@ -176,19 +173,19 @@ class Result(Generic[T, E]):
         raise ValueError(msg)
 
     def expect_err(self, msg: object) -> E:
-        """Returns the error value in a :class:`Result`, or raises a
+        """Returns the error value in a `Result`, or raises a
         ``ValueError`` with the provided message.
 
         Args:
             msg: The error message.
 
         Returns:
-            The error value in the :class:`Result` if it is a
-            :meth:`Result.Err` value.
+            The error value in the `Result` if it is a
+            `Result.Err` value.
 
         Raises:
-            ``ValueError`` with the message provided by ``msg`` if
-            the :class:`Result` is a :meth:`Result.Ok` value.
+            `ValueError` with the message provided by `msg` if
+            the `Result` is a `Result.Ok` value.
 
         Examples:
             >>> try:
@@ -205,16 +202,16 @@ class Result(Generic[T, E]):
         return self._val  # type: ignore
 
     def flatmap(self, op: "Callable[[T], Result[U, E]]") -> "Result[U, E]":
-        """Applies a function to the contained :meth:`Result.Ok` value.
+        """Applies a function to the contained `Result.Ok` value.
 
-        This is different from :meth:`Result.map` because the function
-        result is not wrapped in a new :class:`Result`.
+        This is different from `Result.map` because the function
+        result is not wrapped in a new `Result`.
 
         Args:
-            op: The function to apply to the contained :meth:`Result.Ok` value.
+            op: The function to apply to the contained `Result.Ok` value.
 
         Returns:
-            The result of the function if `self` is an :meth:`Result.Ok` value,
+            The result of the function if `self` is an `Result.Ok` value,
              otherwise returns `self`.
 
         Examples:
@@ -236,7 +233,7 @@ class Result(Generic[T, E]):
 
     @property
     def is_err(self) -> bool:
-        """Returns `True` if the result is :meth:`Result.Err`.
+        """Returns `True` if the result is `Result.Err`.
 
         Examples:
             >>> Ok(1).is_err
@@ -249,7 +246,7 @@ class Result(Generic[T, E]):
 
     @property
     def is_ok(self) -> bool:
-        """Returns `True` if the result is :meth:`Result.Ok`.
+        """Returns `True` if the result is `Result.Ok`.
 
         Examples:
             >>> Ok(1).is_ok
@@ -261,14 +258,14 @@ class Result(Generic[T, E]):
         return self._is_ok
 
     def map(self, op: Callable[[T], U]) -> "Union[Result[U, E], Result[T, E]]":
-        """Applies a function to the contained :meth:`Result.Ok` value.
+        """Applies a function to the contained `Result.Ok` value.
 
         Args:
-            op: The function to apply to the :meth:`Result.Ok` value.
+            op: The function to apply to the `Result.Ok` value.
 
         Returns:
-            A :class:`Result` with its success value as the function result
-            if `self` is an :meth:`Result.Ok` value, otherwise returns
+            A `Result` with its success value as the function result
+            if `self` is an `Result.Ok` value, otherwise returns
             `self`.
 
         Examples:
@@ -283,14 +280,14 @@ class Result(Generic[T, E]):
     def map_err(
         self, op: Callable[[E], F]
     ) -> "Union[Result[T, F], Result[T, E]]":
-        """Applies a function to the contained :meth:`Result.Err` value.
+        """Applies a function to the contained `Result.Err` value.
 
         Args:
-            op: The function to apply to the :meth:`Result.Err` value.
+            op: The function to apply to the `Result.Err` value.
 
         Returns:
-            A :class:`Result` with its error value as the function result
-            if `self` is a :meth:`Result.Err` value, otherwise returns
+            A `Result` with its error value as the function result
+            if `self` is a `Result.Err` value, otherwise returns
             `self`.
 
         Examples:
@@ -303,12 +300,12 @@ class Result(Generic[T, E]):
         return self if self._is_ok else self._type.Err(op(self._val))  # type: ignore
 
     def ok(self) -> Option[T]:
-        """Converts from :class:`Result` [T, E] to
-        :class:`option.option_.Option` [T].
+        """Converts from `Result` [T, E] to
+        `option.option_.Option` [T].
 
         Returns:
-            :class:`Option` containing the success value if `self` is
-            :meth:`Result.Ok`, otherwise :data:`option.option_.NONE`.
+            `Option` containing the success value if `self` is
+            `Result.Ok`, otherwise `option.option_.NONE`.
 
         Examples:
             >>> Ok(1).ok()
@@ -320,14 +317,14 @@ class Result(Generic[T, E]):
         return Option.Some(self._val) if self._is_ok else NONE  # type: ignore
 
     def unwrap(self) -> T:
-        """Returns the success value in the :class:`Result`.
+        """Returns the success value in the `Result`.
 
         Returns:
-            The success value in the :class:`Result`.
+            The success value in the `Result`.
 
         Raises:
             ``ValueError`` with the message provided by the error value
-             if the :class:`Result` is a :meth:`Result.Err` value.
+             if the `Result` is a `Result.Err` value.
 
         Examples:
             >>> Ok(1).unwrap()
@@ -344,15 +341,15 @@ class Result(Generic[T, E]):
         raise ValueError(self._val)
 
     def unwrap_err(self) -> E:
-        """Returns the error value in a :class:`Result`.
+        """Returns the error value in a `Result`.
 
         Returns:
-            The error value in the :class:`Result` if it is a
-            :meth:`Result.Err` value.
+            The error value in the `Result` if it is a
+            `Result.Err` value.
 
         Raises:
             ``ValueError`` with the message provided by the success value
-             if the :class:`Result` is a :meth:`Result.Ok` value.
+             if the `Result` is a `Result.Ok` value.
 
         Examples:
             >>> try:
@@ -369,18 +366,18 @@ class Result(Generic[T, E]):
         return self._val  # type: ignore
 
     def unwrap_or(self, optb: T) -> T:
-        """Returns the success value in the :class:`Result` or ``optb``.
+        """Returns the success value in the `Result` or `optb`.
 
         Args:
             optb: The default return value.
 
         Returns:
-            The success value in the :class:`Result` if it is a
-            :meth:`Result.Ok` value, otherwise ``optb``.
+            The success value in the `Result` if it is a
+            `Result.Ok` value, otherwise `optb`.
 
         Notes:
             If you wish to use a result of a function call as the default,
-            it is recommnded to use :meth:`unwrap_or_else` instead.
+            it is recommnded to use `unwrap_or_else` instead.
 
         Examples:
             >>> Ok(1).unwrap_or(2)
@@ -392,15 +389,15 @@ class Result(Generic[T, E]):
         return self._val if self._is_ok else optb  # type: ignore
 
     def unwrap_or_else(self, op: Callable[[E], U]) -> Union[T, U]:
-        """Returns the sucess value in the :class:`Result` or computes a default
+        """Returns the sucess value in the `Result` or computes a default
         from the error value.
 
         Args:
             op: The function to computes default with.
 
         Returns:
-            The success value in the :class:`Result` if it is
-             a :meth:`Result.Ok` value, otherwise ``op(E)``.
+            The success value in the `Result` if it is
+             a `Result.Ok` value, otherwise `op(E)`.
 
         Examples:
             >>> Ok(1).unwrap_or_else(lambda e: e * 10)
@@ -445,21 +442,21 @@ class Result(Generic[T, E]):
     def __init__(
         self, val: Union[T, E], is_ok: bool, *, _force: bool = False
     ) -> None:
-        """Low-level initializer for :class:`Result` (internal-only).
+        """Low-level initializer for `Result` (internal-only).
 
         **WARNING**
             This constructor is not part of the public API.
-            Prefer using the factory helpers :meth:`Result.Ok`,
-            :meth:`Result.Err`, :func:`Ok`, or
-            :func:`Err` instead.
+            Prefer using the factory helpers `Result.Ok`,
+            `Result.Err`, `Ok`, or
+            `Err` instead.
 
         Args:
-            val: The wrapped success (``T``) or error (``E``) value.
-            is_ok: True if ``val`` represents success; False if it is an error.
+            val: The wrapped success (`T`) or error (`E`) value.
+            is_ok: True if `val` represents success; False if it is an error.
             _force: Internal switch that allows construction.
 
         Raises:
-            TypeError: If called without ``_force=True``.
+            TypeError: If called without `_force=True`.
 
         Examples:
             Correct usage via factories:
@@ -516,13 +513,13 @@ class Result(Generic[T, E]):
 
 # noinspection PyPep8Naming
 def Ok(val: T) -> Result[T, Any]:
-    """Shortcut function for :meth:`Result.Ok`."""
+    """Shortcut function for `Result.Ok`."""
     return Result.Ok(val)
 
 
 # noinspection PyPep8Naming
 def Err(err: E) -> Result[Any, E]:
-    """Shortcut function for :meth:`Result.Err`."""
+    """Shortcut function for `Result.Err`."""
     return Result.Err(err)
 
 
