@@ -21,9 +21,9 @@ from pathlib import Path
 
 from git import Repo
 from git.exc import GitCommandError
-from option import Option
 
-from _dev import _find_project_root, _run
+from ..option import Option
+from . import _find_project_root, _run
 
 
 @contextlib.contextmanager
@@ -191,7 +191,7 @@ def docs_main() -> None:
         args.multiversion = bool(args.publish)
 
     # Resolve project root
-    root_opt: Option[Path] = _find_project_root()
+    root_opt: Option = _find_project_root()
     if root_opt.is_none:
         print("[ERROR] No project root found", file=sys.stderr)
         sys.exit(1)

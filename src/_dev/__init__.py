@@ -26,10 +26,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-from option import Option, Some
+from ..option import Option, Some
 
 
-def _find_project_root() -> Option[Path]:
+def _find_project_root() -> Option:
     """Find the project root directory."""
     fp = Path(__file__)
     target = "pyproject.toml"
