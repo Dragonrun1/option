@@ -22,8 +22,36 @@ from pathlib import Path
 from git import Repo
 from git.exc import GitCommandError
 
-from ..option import Option
+sys.path.append("..")
+# noinspection PyUnresolvedReferences
+from option import Err, Ok, Option, Result
+
 from . import _find_project_root, _run
+
+
+def _mirror_directory(source: Path, dest: Path) -> Result:
+    if not source.is_dir():
+        print(f"{source} is not a directory")
+        return Err(NotADirectoryError(source))
+    if not dest.is_dir():
+        print(f"{dest} is not a directory")
+        return Err(NotADirectoryError(dest))
+    # Copy all directories and files from source/ to dest/
+    shutil.copytree(source, dest, dirs_exist_ok=True)
+    # Remove any files or directories not found in source/ from dest/
+    for root, directories, files in dest.walk(top_down=False):
+        # Remove the files first then the now empty directories.
+        for file in files:
+            file_path = root / file
+            if not (source / file_path.relative_to(dest)).exists():
+                print(f"Unlink {file_path}")
+                file_path.unlink()
+        for directory in directories:
+            dir_path = root / directory
+            if not (source / dir_path.relative_to(dest)).exists():
+                print(f"Remove {dir_path}")
+                dir_path.rmdir()
+    return Ok({})
 
 
 @contextlib.contextmanager
@@ -35,21 +63,6 @@ def _working_directory(path: Path):
         yield
     finally:
         os.chdir(prev_cwd)
-
-
-def _build_sphinx(source: Path, output: Path, builder: str) -> int:
-    """Run single-version Sphinx build using module form."""
-    output.mkdir(parents=True, exist_ok=True)
-    cmd = [
-        sys.executable,
-        "-m",
-        "sphinx.cmd.build",
-        "-b",
-        builder,
-        str(source),
-        str(output),
-    ]
-    return _run(cmd)
 
 
 def _build_sphinx_multiversion(source: Path, output: Path) -> int:
@@ -76,7 +89,6 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
     """
     repo = Repo(root)
     # Informational check: does the remote 'gh-pages' branch exist?
-    gh_exists_remote = False
     try:
         out = repo.git.ls_remote("--heads", "origin", "gh-pages")
         gh_exists_remote = bool(out.strip())
@@ -146,49 +158,27 @@ def _publish_gh_pages(root: Path, built_dir: Path) -> int:
 
 
 def docs_main() -> None:
-    """Build Sphinx documentation locally and optionally publish to gh-pages.
+    """Build Sphinx documentation with sphinx-multiversion and optionally publish.
 
-    Default local build places HTML under docs/main (safe for development).
-    In CI, run with --publish to push the built site to the gh-pages branch.
+    Local builds place the generated site under docs/ (multiversion layout).
+    Use --publish to push the built site to the gh-pages branch.
     """
     parser = argparse.ArgumentParser(prog="dev-docs", add_help=True)
-    parser.add_argument(
-        "--builder",
-        "-b",
-        default="html",
-        help="Sphinx builder (single-version only)",
-    )
     parser.add_argument(
         "--source", "-s", default="doc_src", help="Sphinx source directory"
     )
     parser.add_argument(
-        "--output", "-o", default="docs/main", help="Output directory"
+        "--output",
+        "-o",
+        default="docs",
+        help="Output directory (multiversion root)",
     )
-    mv_group = parser.add_mutually_exclusive_group()
-    mv_group.add_argument(
-        "--multiversion",
-        dest="multiversion",
-        action="store_true",
-        help="Build using sphinx-multiversion (default)",
-    )
-    mv_group.add_argument(
-        "--single",
-        dest="multiversion",
-        action="store_false",
-        help="Build a single-version site with Sphinx",
-    )
-    # Note: no default here; we'll infer default based on --publish below
     parser.add_argument(
         "--publish",
         action="store_true",
         help="Publish the built docs to gh-pages branch",
     )
     args = parser.parse_args()
-
-    # Determine default build mode: multiversion for publish, single for local
-    if getattr(args, "multiversion", None) is None:
-        # If user did not specify --single/--multiversion explicitly
-        args.multiversion = bool(args.publish)
 
     # Resolve project root
     root_opt: Option = _find_project_root()
@@ -198,31 +188,21 @@ def docs_main() -> None:
     root: Path = root_opt.unwrap()
 
     source = (root / args.source).resolve()
-
-    # If building multiversion and the default output is still in use,
-    # place versions directly under docs/ (docs/main is for single-version).
-    if args.multiversion and args.output == "docs/main":
-        args.output = "docs"
-
     output = (root / args.output).resolve()
 
     if not source.exists():
         print(f"[ERROR] Sphinx source not found: {source}", file=sys.stderr)
         sys.exit(2)
 
-    if args.multiversion:
-        print("[RUN] Building Sphinx documentation (multiversion)")
-        code = _build_sphinx_multiversion(source, output)
-    else:
-        print("[RUN] Building Sphinx documentation (single-version)")
-        code = _build_sphinx(source, output, args.builder)
+    print("[RUN] Building Sphinx documentation (sphinx-multiversion)")
+    code = _build_sphinx_multiversion(source, output)
     if code != 0:
         sys.exit(code)
 
     if args.publish:
         print("[RUN] Publishing docs to gh-pages")
         # Verify this is a git repo
-        git_dir = root / ".git"
+        git_dir = root / "gh-pages"
         if not git_dir.exists():
             print(
                 "[ERROR] Not a git repository; cannot publish", file=sys.stderr

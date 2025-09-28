@@ -113,3 +113,6 @@ dmypy.json
 
 # idea
 .idea/
+
+# gh-pages worktree
+gh-pages/

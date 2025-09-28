@@ -26,7 +26,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from ..option import Option, Some
+sys.path.append("..")
+# noinspection PyUnresolvedReferences
+from option import Option, Some
 
 
 def _find_project_root() -> Option:
